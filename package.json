@@ -5,13 +5,14 @@
     "license": "MIT",
     "scripts": {
         "build": "babel app -d dist",
-        "start": "yarn build && node dist/index.js",
-        "dev": "nodemon --exec  babel-node app/index.js"
+        "start": "yarn build && node dist/app.js",
+        "dev": "nodemon --exec  babel-node app/app.js"
     },
     "dependencies": {
         "dotenv": "^11.0.0",
         "express": "^4.17.2",
-        "mongoose": "^6.1.6"
+        "mongoose": "^6.1.6",
+        "nanoid": "^3.1.32"
     },
     "devDependencies": {
         "@babel/cli": "^7.16.8",
