@@ -18,21 +18,21 @@ yarn install && yarn start
 
 ### Service Requirements
 
--   [ ] 1. 設計一支 API，使用者給一組長網址，response 短網址，長度為 6 位英數大小寫混合 - e.g. www.google.com -> localhost:8080/Gjh5t8
+-   [x] 1. 設計一支 API，使用者給一組長網址，response 短網址，長度為 6 位英數大小寫混合 - e.g. www.google.com -> localhost:8080/Gjh5t8
 
--   [ ] 2. 設計一支 API，使用者給一組短網址，redirect 到長網址 - e.g. localhost:8080/Gjh5t8 -> www.google.com
+-   [x] 2. 設計一支 API，使用者給一組短網址，redirect 到長網址 - e.g. localhost:8080/Gjh5t8 -> www.google.com
 
--   [ ] 3. 短網址有期限，過期時間為一年
+-   [x] 3. 短網址有期限，過期時間為一年
 
--   [ ] 4. 長網址與短網址為一對一
+-   [x] 4. 長網址與短網址為一對一
 
--   [ ] 5. 不需要實作前端畫面，實作 API 即可
+-   [x] 5. 不需要實作前端畫面，實作 API 即可
 
 ### Technical Requirements
 
 -   [ ] 1. 請將作業上傳至 Github
 
--   [ ] 2. 可以使用任何熟悉的語言或 framework (不影響面試結果)，但 Go 搭配 Gin 尤佳
+-   [x] 2. 可以使用任何熟悉的語言或 framework (不影響面試結果)，但 Go 搭配 Gin 尤佳
 
 -   [ ] 3. 可以使用任何能滿足需求的資料庫
 
@@ -40,7 +40,7 @@ yarn install && yarn start
 
 -   [ ] 5. 不需考慮 high concurrency，但需要考慮限制同一 IP 刻意地重複請求
 
--   [ ] 6. 不需部署至雲端，localhost 可執行即可
+-   [x] 6. 不需部署至雲端，localhost 可執行即可
 
 ### Additional Requirements
 

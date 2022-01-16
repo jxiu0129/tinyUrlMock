@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 import UsedKeys from "../models/UsedKeys.model";
 import UnusedKeys from "../models/UnusedKeys.model";
 
-export const move_a_key_to_used = async (uniqueKey) => {
-    const session = await mongoose.startSession();
+export const move_a_key_to_used = (uniqueKey) => {
     return new Promise(async (resolve, reject) => {
+        const session = await mongoose.startSession();
         try {
             // 從unused取一個
             session.startTransaction();
@@ -38,11 +38,11 @@ export const delete_one_UsedKey = (uniqueKey) => {
     });
 };
 
-export const insert_many_UnusedKeys = (keysArr) => {
+export const insert_UnusedKeys = (keysArr) => {
     return new Promise(async (resolve, reject) => {
         try {
             const response = await UnusedKeys.insertMany(keysArr);
-            console.log("success insert to unusedkeys", response);
+            console.log("success insert to unusedkeys");
             resolve(response);
         } catch (error) {
             reject(error);
@@ -77,6 +77,20 @@ export const search_all_from_UsedKeys = () => {
         try {
             const response = await UsedKeys.find({}).exec();
             resolve(response);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+export const delete_all_from_both_Keydbs = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await UsedKeys.deleteMany({}, () => console.log("delete all used"));
+            await UnusedKeys.deleteMany({}, () =>
+                console.log("delete all unused")
+            );
+            resolve();
         } catch (error) {
             reject(error);
         }

@@ -1,9 +1,15 @@
 import Url from "../models/Url.model";
 
 export const find_exist_url = (url) => {
+    const { shortenUrl, originalUrl } = url;
     return new Promise(async (resolve, reject) => {
         try {
-            const response = await Url.findOne({ originalUrl: url }).exec();
+            let response;
+            if (originalUrl) {
+                response = await Url.findOne({ originalUrl }).exec();
+            } else {
+                response = await Url.findOne({ shortenUrl }).exec();
+            }
             resolve(response);
         } catch (error) {
             reject(error);

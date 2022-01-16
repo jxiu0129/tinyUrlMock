@@ -8,8 +8,10 @@ const router = express.Router();
 
 // router.route("/").get(url.createTinyUrl);
 
+router.route("/admin").get(admin.createNewKeys);
+
 router.route("/createTinyUrl").post(url.createTinyUrl);
 
-router.route("/admin").get(admin.createNewKeys);
+router.route("/:url").get(url.redirectUrl);
 
 export default router;

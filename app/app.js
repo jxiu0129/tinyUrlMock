@@ -28,7 +28,7 @@ app.use(
     },
     routes
 );
-
+app.get("*", (_, res) => res.status(404).send("Not Found"));
 // connnect to mongodb
 connectDB().then(() => {
     // schedule here

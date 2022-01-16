@@ -1,17 +1,26 @@
+import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 
 import {
     search_all_from_UnusedKeys,
     search_all_from_UsedKeys,
-    insert_many_UnusedKeys,
+    insert_UnusedKeys,
     search_one_from_UnusedKeys,
     move_a_key_to_used,
     delete_one_UsedKey,
+    // delete_all_from_both_Keydbs,
 } from "../dao/KGS.dao";
+
+import { delete_by_shortenUrl } from "../dao/url.dao";
 
 // create new keys and insert into db
 const createNewKeys = () => {
     return new Promise(async (resolve, reject) => {
+        // 清資料用
+        // delete_all_from_both_Keydbs()
+        //     .then(() => console.log("delete success"))
+        //     .catch((err) => console.error(err));
+        // return;
         try {
             const alphabet =
                 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -44,7 +53,7 @@ const createNewKeys = () => {
             for (let i of [...nonDuplicateKeys]) {
                 finalKeys.push({ uniqueKey: i });
             }
-            const response = await insert_many_UnusedKeys(finalKeys);
+            const response = await insert_UnusedKeys(finalKeys);
             resolve(response);
         } catch (error) {
             reject(error);
@@ -70,10 +79,29 @@ const setKeysUnused = (uniqueKey) => {
     return new Promise(async (resolve, reject) => {
         try {
             await delete_one_UsedKey(uniqueKey);
-            await insert_many_UnusedKeys([{ uniqueKey }]);
+            await insert_UnusedKeys([{ uniqueKey }]);
             resolve();
         } catch (error) {
             reject(error);
+        }
+    });
+};
+
+const url_expired = (shortenUrl) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // 從Url刪掉過期的，然後setKeyUnused
+            const session = await mongoose.startSession();
+
+            session.startTransaction();
+            await delete_by_shortenUrl(shortenUrl);
+            await setKeysUnused(shortenUrl);
+            await session.commitTransaction();
+            resolve();
+        } catch (error) {
+            reject(error);
+        } finally {
+            session.endSession();
         }
     });
 };
@@ -82,4 +110,5 @@ export default {
     createNewKeys,
     setKeysUsed,
     setKeysUnused,
+    url_expired,
 };

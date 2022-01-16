@@ -14,6 +14,20 @@ const createTinyUrl = (req, res, next) => {
         });
 };
 
+const redirectUrl = (req, res, next) => {
+    const { url } = req.params;
+    logic
+        .redirectUrl(url, res, next)
+        .then((result) => {
+            responseSuccess(res, 200, "jxiu", result, "redirectUrl");
+        })
+        .catch((err) => {
+            console.error(err);
+            responseErr(res, 500, "jxiu", err, "redirectUrl");
+        });
+};
+
 export default {
     createTinyUrl,
+    redirectUrl,
 };
