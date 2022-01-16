@@ -4,6 +4,9 @@ import {
     search_all_from_UnusedKeys,
     search_all_from_UsedKeys,
     insert_many_UnusedKeys,
+    search_one_from_UnusedKeys,
+    move_a_key_to_used,
+    delete_one_UsedKey,
 } from "../dao/KGS.dao";
 
 // create new keys and insert into db
@@ -41,8 +44,8 @@ const createNewKeys = () => {
             for (let i of [...nonDuplicateKeys]) {
                 finalKeys.push({ uniqueKey: i });
             }
-            await insert_many_UnusedKeys(finalKeys);
-            resolve();
+            const response = await insert_many_UnusedKeys(finalKeys);
+            resolve(response);
         } catch (error) {
             reject(error);
         }
@@ -51,14 +54,32 @@ const createNewKeys = () => {
 
 // move usedKeys to usedKeys db
 const setKeysUsed = () => {
-    return new Promise((resolve, reject) => {});
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { uniqueKey } = await search_one_from_UnusedKeys();
+            await move_a_key_to_used(uniqueKey);
+            resolve(uniqueKey);
+        } catch (error) {
+            reject(error);
+        }
+    });
 };
 
 // move unused keys to unusedKeys db
-const setKeysUnused = () => {
-    return new Promise((resolve, reject) => {});
+const setKeysUnused = (uniqueKey) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await delete_one_UsedKey(uniqueKey);
+            await insert_many_UnusedKeys([{ uniqueKey }]);
+            resolve();
+        } catch (error) {
+            reject(error);
+        }
+    });
 };
 
 export default {
     createNewKeys,
+    setKeysUsed,
+    setKeysUnused,
 };

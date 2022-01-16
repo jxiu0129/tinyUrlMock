@@ -1,4 +1,5 @@
 import express from "express";
+import bodyparser from "body-parser";
 
 import dotenv from "dotenv";
 import { connectDB } from "./config";
@@ -15,6 +16,9 @@ const app = express();
 // app.get("/to", (req, res) => {
 //     res.send("success redirect");
 // });
+
+app.use(bodyparser.json({ limit: "50mb" }));
+app.use(bodyparser.urlencoded({ limit: "50mb", extended: false }));
 
 app.use(
     "/",
