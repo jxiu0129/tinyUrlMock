@@ -86,10 +86,8 @@ export const search_all_from_UsedKeys = () => {
 export const delete_all_from_both_Keydbs = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            await UsedKeys.deleteMany({}, () => console.log("delete all used"));
-            await UnusedKeys.deleteMany({}, () =>
-                console.log("delete all unused")
-            );
+            await UsedKeys.deleteMany({});
+            await UnusedKeys.deleteMany({});
             resolve();
         } catch (error) {
             reject(error);

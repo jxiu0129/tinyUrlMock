@@ -20,7 +20,7 @@ const createNewKeys = () => {
         // delete_all_from_both_Keydbs()
         //     .then(() => console.log("delete success"))
         //     .catch((err) => console.error(err));
-        // return;
+        // return resolve();
         try {
             const alphabet =
                 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
