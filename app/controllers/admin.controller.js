@@ -12,6 +12,18 @@ const createNewKeys = (req, res, next) => {
         });
 };
 
+const clearAll = (req, res, next) => {
+    logic
+        .clearAll()
+        .then((result) => {
+            responseSuccess(res, 200, "jxiu", result, "clearAll");
+        })
+        .catch((err) => {
+            responseErr(res, 500, "jxiu", err, "clearAll");
+        });
+};
+
 export default {
     createNewKeys,
+    clearAll,
 };

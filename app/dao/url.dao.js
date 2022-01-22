@@ -12,6 +12,7 @@ export const find_exist_url = (url) => {
             }
             resolve(response);
         } catch (error) {
+            console.error("find_exist_url");
             reject(error);
         }
     });
@@ -28,6 +29,7 @@ export const insert_newURL = (originalUrl, shortenUrl) => {
             const response = await Url.insertMany([insertObj]);
             resolve(response);
         } catch (error) {
+            console.error("insert_newURL");
             reject(error);
         }
     });
@@ -39,6 +41,19 @@ export const delete_by_shortenUrl = (shortenUrl) => {
             const response = await Url.findOneAndRemove({ shortenUrl });
             resolve(response);
         } catch (error) {
+            console.error("delete_by_shortenUrl");
+            reject(error);
+        }
+    });
+};
+
+export const delete_all_Url = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await Url.deleteMany({});
+            resolve();
+        } catch (error) {
+            console.error("delete_all_Url");
             reject(error);
         }
     });

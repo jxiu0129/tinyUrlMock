@@ -56,6 +56,7 @@ const createNewKeys = () => {
             const response = await insert_UnusedKeys(finalKeys);
             resolve(response);
         } catch (error) {
+            console.error("createNewKeys");
             reject(error);
         }
     });
@@ -69,6 +70,7 @@ const setKeysUsed = () => {
             await move_a_key_to_used(uniqueKey);
             resolve(uniqueKey);
         } catch (error) {
+            console.error("setKeysUsed");
             reject(error);
         }
     });
@@ -82,6 +84,7 @@ const setKeysUnused = (uniqueKey) => {
             await insert_UnusedKeys([{ uniqueKey }]);
             resolve();
         } catch (error) {
+            console.error("setKeysUnused");
             reject(error);
         }
     });
@@ -89,9 +92,13 @@ const setKeysUnused = (uniqueKey) => {
 
 const url_expired = (shortenUrl) => {
     return new Promise(async (resolve, reject) => {
+        const session = await mongoose
+            .startSession()
+            .catch((err) =>
+                console.error("url_expired (mongoose session)", err)
+            );
         try {
             // 從Url刪掉過期的，然後setKeyUnused
-            const session = await mongoose.startSession();
 
             session.startTransaction();
             await delete_by_shortenUrl(shortenUrl);
@@ -99,6 +106,7 @@ const url_expired = (shortenUrl) => {
             await session.commitTransaction();
             resolve();
         } catch (error) {
+            console.error("url_expired");
             reject(error);
         } finally {
             session.endSession();

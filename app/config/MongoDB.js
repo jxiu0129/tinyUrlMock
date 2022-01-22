@@ -10,3 +10,11 @@ export const connectDB = async () => {
         console.error("DB connection Error ==>", err);
     }
 };
+
+export const closeDB = async () => {
+    try {
+        await mongoose.connection.close();
+    } catch (err) {
+        console.error("DB close connection Error ==>", err);
+    }
+};

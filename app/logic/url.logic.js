@@ -53,7 +53,6 @@ const createTinyUrl = (url) => {
             const response = await insert_newURL(url, uniqueKey);
             const { shortenUrl, originalUrl } = response[0];
             // await shortenUrlRedis.set(url, shortenUrl);  //? 新寫入有需要進redis?
-
             resolve({
                 originalUrl,
                 shortenUrl: `localhost:${process.env.PORT}/${shortenUrl}`,

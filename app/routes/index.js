@@ -8,7 +8,7 @@ const router = express.Router();
 
 // router.route("/").get(url.createTinyUrl);
 
-router.route("/admin").get(admin.createNewKeys);
+router.route("/admin").post(admin.createNewKeys).get(admin.clearAll);
 
 router.route("/createTinyUrl").post(url.createTinyUrl);
 
