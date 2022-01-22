@@ -9,3 +9,14 @@ export const prefixChecker = (str) => {
     // }
     return str;
 };
+
+export const urlExpiryChecker = (createDate) => {
+    const EXPIRED_DURATION = parseInt(process.env.EXPIRED_DURATION);
+    if (typeof createDate === "string") {
+        createDate = Date.parse(createDate);
+    }
+    if (Date.now() - createDate > EXPIRED_DURATION) {
+        return true;
+    }
+    return false;
+};

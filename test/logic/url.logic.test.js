@@ -5,12 +5,20 @@ import UrlLogic from "../../app/logic/url.logic";
 import { closeDB, connectDB, shortenUrlRedis } from "../../app/config";
 import KGS from "../../app/services/KeyGenerate.service";
 import AdminLogic from "../../app/logic/admin.logic";
+
 const request = supertest(app);
+
 describe("測試url邏輯層", () => {
+    const OLD_ENV = process.env;
     beforeAll(async () => {
         await connectDB();
         await AdminLogic.clearAll();
         await KGS.createNewKeys();
+    });
+    afterAll(() => {
+        jest.clearAllMocks();
+        jest.resetModules();
+        process.env = { ...OLD_ENV };
     });
     describe("測試createTinyUrl", () => {
         it("傳入任一網址會回傳縮短後的網址，並符合英數大小寫共六字", async () => {
@@ -62,6 +70,22 @@ describe("測試url邏輯層", () => {
             // assert
             expect(result1.shortenUrl).toBe(result2.shortenUrl);
         });
+
+        it("如果縮的網址沒過期，會回傳一樣的縮網址；過期了會建一個新的並回傳不一樣的", async () => {
+            // arrange
+            const url = "www.a.com";
+            const result = await UrlLogic.createTinyUrl(url);
+            const unexpiredResult = await UrlLogic.createTinyUrl(url);
+            process.env.EXPIRED_DURATION = 2000;
+            await new Promise((r) => setTimeout(r, 2000));
+
+            // act
+            const expiredResult = await UrlLogic.createTinyUrl(url);
+
+            // assert
+            expect(result).toEqual(unexpiredResult);
+            expect(result).not.toEqual(expiredResult);
+        }, 10000);
     });
     describe("測試redirectUrl", () => {
         it("輸入從createTinyUrl回傳的短網址，導回原本的網址", async () => {
@@ -80,6 +104,19 @@ describe("測試url邏輯層", () => {
             expect(status).toBe(302);
             expect(location).toBe(redirectUrl);
         });
-        // ? it("短網址的過期時間為一年");
+        it("過期的短網址回傳404", async () => {
+            // arrange
+            const url = "www.google.com";
+            const { shortenUrl } = await UrlLogic.createTinyUrl(url);
+            const redirectUrl = `https://${url}`;
+            process.env.EXPIRED_DURATION = 2000;
+            await new Promise((r) => setTimeout(r, 2000));
+
+            // act
+            const { status } = await request.get(`/${shortenUrl.slice(-6)}`);
+
+            // assert
+            expect(status).toBe(404);
+        });
     });
 });
