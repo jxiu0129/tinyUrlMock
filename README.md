@@ -1,22 +1,31 @@
 # TinyURL Mock
 
-<!-- ### FunNow 二面測驗 -->
+#### FunNow 二面測驗
 
 <!-- 面試用測驗 -->
 
-<!-- [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier) -->
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
+
+## Overview
+
+-   **Installation**
+-   **Requirements**
+-   **How to use**
+-   **APIs**
+-   **Source Code File Structure**
+-   **Further updates ideas**
 
 ## Installation
 
-<!-- ```shell
-git clone https://github.com/jxiu0129/noodoe_backend_test.git
-cd noodoe_backend_test
+```shell
+git clone https://github.com/jxiu0129/tinyUrlMock.git
+cd tinyUrlMock
 yarn install && yarn start
-``` -->
+```
 
 ## Requirements
 
-### Service Requirements
+#### Service Requirements
 
 -   [x] 1. 設計一支 API，使用者給一組長網址，response 短網址，長度為 6 位英數大小寫混合 - e.g. www.google.com -> localhost:8080/Gjh5t8
 
@@ -28,9 +37,9 @@ yarn install && yarn start
 
 -   [x] 5. 不需要實作前端畫面，實作 API 即可
 
-### Technical Requirements
+#### Technical Requirements
 
--   [ ] 1. 請將作業上傳至 Github
+-   [x] 1. 請將作業上傳至 Github
 
 -   [x] 2. 可以使用任何熟悉的語言或 framework (不影響面試結果)，但 Go 搭配 Gin 尤佳
 
@@ -42,54 +51,191 @@ yarn install && yarn start
 
 -   [x] 6. 不需部署至雲端，localhost 可執行即可
 
-### Additional Requirements
+#### Additional Requirements
 
--   [ ] 1. 單元測試
+-   [x] 1. 單元測試
 
--   [ ] 2. 將服務包裝成 docker
+-   [x] 2. 將服務包裝成 docker
 
 ## How To Use
 
-<!-- -   在根目錄匯入.env 檔
--   執行`yarn start`之後，可開啟 [swagger API doc](http://localhost:3000/api-docs) 做查看
--   流程：
-    1. 註冊（email, pwd）
-     -->
+### - localhost version
+
+-   需有安裝 **redis** server ，使用 **6379** port
+-   使用 **yarn** 作為 node module manager
+
+1. 在根目錄匯入.env 檔
+2. 執行`yarn start`
+3. 執行`yarn test`可跑測試用檔案
+4. 先用 postman 或是任何 api tools， **get** [localhost:3000/admin](localhost:3000/admin)，注入 shorten url 所需要的 keys
+
+### - Docker version
+
+1. 在根目錄執行`docker compose up -d`
+2. `docker exec -it express-server yarn test`可執行 test
+3. 先用 postman 或是任何 api tools， **get** [localhost:3001/admin](localhost:3001/admin)，注入 shorten url 所需要的 keys
+4. [localhost:8080](localhost:8080) 可使用 mongo-express 查看 mongoDB 資料
+
+-   備註：**Ports**
+    -   Redis:6379
+    -   mongodb:27017
+    -   mongo-express:8080
+    -   api-server(docker):3001
+
+## APIs
+
+### - create TinyUrl
+
+#### request
+
+```http
+POST /createTinyUrl
+```
+
+_request body (Form Encoded)_
+name|value
+:-- | :--
+url | https://www.google.com
+
+#### response
+
+```json
+{
+    "status": 200,
+    "message": "createTinyUrl success",
+    "data": {
+        "originalUrl": "www.google.com",
+        "shortenUrl": "localhost:3000/SG6ZsI"
+    },
+    "time_tw": "2022-01-24T17:21:19.452Z"
+}
+```
+
+### - redirect TinyUrl
+
+#### request
+
+沿用上面範例回傳之短網址
+
+```http
+GET /SG6ZsI
+```
+
+#### response
+
+將使用者導回原輸入之網址，在這範例中是 www.google.com
+
+### - add new keys (for key db)
+
+#### request
+
+```http
+GET /admin
+```
+
+#### response
+
+```json
+{
+  "status": 200,
+  "message": "createNewKeys success",
+  "data": [
+    {
+      "uniqueKey": "YLqKXe",
+      "_id": "61eee35dc9de5ad2aa4a7e90",
+      "__v": 0
+    },
+    {
+      "uniqueKey": "xdOrVB",
+      "_id": "61eee35dc9de5ad2aa4a7e91",
+      "__v": 0
+    },
+    ...共50筆
+  ],
+  "time_tw": "2022-01-24T17:35:25.340Z"
+}
+```
 
 ## Source Code File Structure
 
-<!-- ```
+```
+.
+├── Dockerfile
 ├── README.md
 ├── app
+│   ├── app.js
 │   ├── config
 │   │   ├── MongoDB.js
+│   │   ├── Redis.js
 │   │   ├── Schedule.js
 │   │   └── index.js
 │   ├── controllers
-│   │   ├── user.controller.js
-│   │   └── weather.controller.js
+│   │   ├── admin.controller.js
+│   │   └── url.controller.js
 │   ├── dao
-│   │   ├── user.dao.js
-│   │   └── weather.dao.js
+│   │   ├── KGS.dao.js
+│   │   └── url.dao.js
+│   ├── index.js
 │   ├── logic
-│   │   ├── user.logic.js
-│   │   └── weather.logic.js
+│   │   ├── admin.logic.js
+│   │   └── url.logic.js
 │   ├── models
-│   │   ├── User.model.js
-│   │   └── Weather.model.js
+│   │   ├── UnusedKeys.model.js
+│   │   ├── Url.model.js
+│   │   └── UsedKeys.model.js
 │   ├── routes
-│   │   ├── index.js
-│   │   ├── user.route.js
-│   │   └── weather.route.js
+│   │   └── index.js
 │   ├── services
+│   │   └── KeyGenerate.service.js
 │   └── utils
 │       ├── ApiResponse.js
-│       ├── ApiServices.js
-│       ├── Permission.js
+│       ├── Checker.js
 │       └── index.js
-├── index.js
+├── coverage -> 測試後coverage資訊
+│
+├── dist
+│   ├── app.js
+│   ├── config
+│   │   ├── MongoDB.js
+│   │   ├── Redis.js
+│   │   ├── Schedule.js
+│   │   └── index.js
+│   ├── controllers
+│   │   ├── admin.controller.js
+│   │   └── url.controller.js
+│   ├── dao
+│   │   ├── KGS.dao.js
+│   │   └── url.dao.js
+│   ├── index.js
+│   ├── logic
+│   │   ├── admin.logic.js
+│   │   └── url.logic.js
+│   ├── models
+│   │   ├── UnusedKeys.model.js
+│   │   ├── Url.model.js
+│   │   └── UsedKeys.model.js
+│   ├── routes
+│   │   └── index.js
+│   ├── services
+│   │   └── KeyGenerate.service.js
+│   └── utils
+│       ├── ApiResponse.js
+│       ├── Checker.js
+│       └── index.js
+├── docker-compose.yml
+├── jest.config.js
 ├── package.json
-├── swagger.yaml
+├── test
+│   ├── logic
+│   │   └── url.logic.test.js
+│   └── service
+│       └── KGS.test.js
 ├── yarn-error.log
 └── yarn.lock
-``` -->
+```
+
+## Further updates ideas
+
+-   加入 User，可客製化 domain
+-   以分散式系統作為出發點，另開 redis server，以 80/20 法則，將 keys 的 20%放進此 redis server，把放進去的都移至 usedkey db，在取用 keys 都直接從此取得，一來減輕 db 的 read load，二來若此 redis server 掛了也不用擔心所有的 keys 都不見了
+-   reduncdants, replicas
