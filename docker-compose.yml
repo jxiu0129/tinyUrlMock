@@ -1,0 +1,102 @@
+version: "3"
+services:
+    # db
+    db:
+        container_name: mongo-db
+        image: mongo:latest
+        ports:
+            - 27017:27017
+        volumes:
+            - mongo-data:/data/db
+    # replica-db:
+    #     container_name: mongo-db-replica
+    #     image: mongo:latest
+    #     ports:
+    #         - 27018:27017
+    #     depends_on:
+    #         - db
+    #     volumes:
+    #         - mongo-data:/data/db
+
+    # p-db:
+    #     container_name: mongo-db-primary
+    #     image: bitnami/mongodb:5.0
+    #     restart: always
+    #     ports:
+    #         - 27017:27017
+    #     environment:
+    #         - MONGODB_REPLICA_SET_MODE=primary
+    #         - MONGODB_ADVERTISED_HOSTNAME=mongo-db-primary
+    #         - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    #         - MONGODB_ROOT_PASSWORD=password123
+    #         - ALLOW_EMPTY_PASSWORD=yes
+    #     volumes:
+    #         - mongo-data:/data/db
+    # s-db:
+    #     container_name: mongo-db-secondary
+    #     image: bitnami/mongodb:5.0
+    #     depends_on:
+    #         - mongo-db-primary
+    #     # restart: always
+    #     environment:
+    #         - MONGODB_REPLICA_SET_MODE=secondary
+    #         - MONGODB_ADVERTISED_HOSTNAME=mongo-db-primary
+    #         - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    #         - MONGODB_ADVERTISED_HOSTNAME=mongo-db-secondary
+    #         - MONGODB_INITIAL_PRIMARY_HOST=mongo-db-primary
+    #         - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
+    #         - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+    # arb-db:
+    #     container_name: mongo-db-arbiter
+    #     image: bitnami/mongodb:5.0
+    #     depends_on:
+    #         - mongo-db-primary
+    #     environment:
+    #         - MONGODB_REPLICA_SET_MODE=arbiter
+    #         - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+    #         - MONGODB_INITIAL_PRIMARY_HOST=mongo-db-primary
+    #         - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
+    #         - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    #         - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=password123
+    # api server
+    web:
+        container_name: express-server
+        build: .
+        ports:
+            - 3001:3001
+        environment:
+            - PORT=3001
+            # - MONGO_URL=mongodb://p-db/myFirstDatabase?retryWrites=false&w=majority
+            - MONGO_URL=mongodb://db/myFirstDatabase?retryWrites=false&w=majority
+            - EXPIRED_DURATION=31536000000
+            - RATE_LIMIT_MAX=100
+            # - MONGO_USER=root
+            # - MONGO_PWD=password123
+            - REDIS_HOST=cache
+        depends_on:
+            - db
+        # for local develop
+        # volumes:
+        #     - .:/usr/src/app
+    cache:
+        container_name: redis-db
+        image: redis:latest
+        ports:
+            - 6379:6379
+        restart: always
+        volumes:
+            - redis-data:/data/cache
+    mongo-express:
+        container_name: mongo-express
+        image: mongo-express
+        ports:
+            - 8080:8081
+        environment:
+            - ME_CONFIG_MONGODB_SERVER=db
+        depends_on:
+            - db
+volumes:
+    mongo-data:
+        driver: local
+    redis-data:
+        driver: local

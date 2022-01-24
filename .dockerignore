@@ -1,0 +1,9 @@
+# 這些是不用放進docker container的東西
+./node_modules
+.gitignore
+./.git
+README.md
+docker-compose.yml
+Dockerfile
+./coverage
+.dockerignore

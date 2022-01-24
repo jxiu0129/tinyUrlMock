@@ -5,25 +5,25 @@ import UnusedKeys from "../models/UnusedKeys.model";
 
 export const move_a_key_to_used = (uniqueKey) => {
     return new Promise(async (resolve, reject) => {
-        const session = await mongoose.startSession();
+        // const session = await mongoose.startSession();
         try {
             // 從unused取一個
-            session.startTransaction();
+            // session.startTransaction();
             await UnusedKeys.findOneAndRemove(
-                { uniqueKey },
-                { session: session }
+                { uniqueKey }
+                // { session: session }
             );
             // 放進used
             const response = await UsedKeys.insertMany([{ uniqueKey }], {
-                session: session,
+                // session: session,
             });
-            await session.commitTransaction();
+            // await session.commitTransaction();
             resolve(response);
         } catch (error) {
             console.error("move_a_key_to_used");
             reject(error);
         } finally {
-            session.endSession();
+            // session.endSession();
         }
     });
 };

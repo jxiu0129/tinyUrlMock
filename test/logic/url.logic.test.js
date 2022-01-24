@@ -2,7 +2,7 @@ import supertest from "supertest";
 
 import app from "../../app/app";
 import UrlLogic from "../../app/logic/url.logic";
-import { closeDB, connectDB, shortenUrlRedis } from "../../app/config";
+import { connectDB } from "../../app/config";
 import KGS from "../../app/services/KeyGenerate.service";
 import AdminLogic from "../../app/logic/admin.logic";
 

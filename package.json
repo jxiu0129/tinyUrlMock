@@ -4,9 +4,9 @@
     "main": "index.js",
     "license": "MIT",
     "scripts": {
-        "build": "babel index -d dist",
+        "build": "babel app -d dist",
         "start": "yarn build && node dist/index.js",
-        "dev": "nodemon --exec  babel-node index.js",
+        "dev": "nodemon --exec  babel-node app/index.js",
         "test": "jest --verbose --silent -i --forceExit"
     },
     "dependencies": {

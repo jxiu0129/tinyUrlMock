@@ -92,24 +92,24 @@ const setKeysUnused = (uniqueKey) => {
 
 const url_expired = (shortenUrl) => {
     return new Promise(async (resolve, reject) => {
-        const session = await mongoose
-            .startSession()
-            .catch((err) =>
-                console.error("url_expired (mongoose session)", err)
-            );
+        // const session = await mongoose
+        //     .startSession()
+        //     .catch((err) =>
+        //         console.error("url_expired (mongoose session)", err)
+        //     );
         try {
             // 從Url刪掉過期的，然後setKeyUnused
 
-            session.startTransaction();
+            // session.startTransaction();
             await delete_by_shortenUrl(shortenUrl);
             await setKeysUnused(shortenUrl);
-            await session.commitTransaction();
+            // await session.commitTransaction();
             resolve();
         } catch (error) {
             console.error("url_expired");
             reject(error);
         } finally {
-            session.endSession();
+            // session.endSession();
         }
     });
 };
